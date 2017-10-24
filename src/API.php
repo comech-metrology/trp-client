@@ -1,16 +1,18 @@
 <?php
+/** TrackRecordPro API Client class v1.0.
+ *
+ * Supports API v3.0+
+ * (C) CoMech Metrology Ltd 2017,
+ * First revision: Craig Edwards
+ *
+ * Licensed under the Apache License, version 2.0.
+ */
 
 namespace CoMech\TRP;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
-/** TrackRecordPro API Client class v1.0.
- *
- * Supports API v3.0+
- * (C) CoMech Metrology Ltd 2017,
- * First revision: Craig Edwards
- */
 class API implements LoggerAwareInterface
 {
 	/** Current certificate filename used for requests */
