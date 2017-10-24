@@ -1,0 +1,19 @@
+{
+  "name": "comech/trp-api-client",
+  "description": "Simple client for the TrackRecordPro API.",
+  "license": "apache",
+  "authors": [
+    {
+      "name": "Craig Edwards",
+      "email": "craig.edwards@comech.co.uk"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "CoMech\\TRP\\": "src/"
+    }
+  },
+  "require": {
+    "monolog/monolog": "^1.23"
+  }
+}
