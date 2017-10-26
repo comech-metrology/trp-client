@@ -6,4 +6,5 @@ php:
   - '7.0'
   - '7.1'
 
+before_script: composer update
 script: phpunit tests/base --coverage-text
