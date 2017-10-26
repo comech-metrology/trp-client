@@ -1,6 +1,6 @@
 {
   "name": "comech/trp-api-client",
-  "description": "Simple client for the TrackRecordPro API.",
+  "description": "Simple PHP client library for the TrackRecordPro API.",
   "license": "Apache-2.0",
   "type": "library",
   "keywords" : ["api", "trackrecord", "trackrecordpro"],
