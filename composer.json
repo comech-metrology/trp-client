@@ -27,6 +27,9 @@
     }
   },
   "require": {
-    "monolog/monolog": "^1.23"
+    "monolog/monolog": "^1.23",
+    "ext-curl" : "*",
+    "ext-json" : "*",
+    "php" : "^5.3 || ^7.0"
   }
 }
