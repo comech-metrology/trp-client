@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace CoMech\TRP\Exception;
 
