@@ -1,13 +1,26 @@
 {
   "name": "comech/trp-api-client",
   "description": "Simple client for the TrackRecordPro API.",
-  "license": "apache",
+  "license": "Apache-2.0",
+  "type": "library",
+  "keywords" : ["api", "trackrecord", "trackrecordpro"],
   "authors": [
     {
       "name": "Craig Edwards",
-      "email": "craig.edwards@comech.co.uk"
+      "email": "craig.edwards@comech.co.uk",
+      "homepage" : "http://www.trackrecordpro.co.uk",
+      "role" : "developer"
     }
   ],
+  "support": {
+  	"email" : "itsupport@comech.co.uk",
+	"source" : "https://github.com/comech-metrology/trp-client",
+	"docs" : "https://docs.trackrecordpro.co.uk",
+	"issues" : "https://github.com/comech-metrology/trp-client/issues"
+  },
+  "suggest": {
+  	"monolog/monolog" : "Allows logging of diagnostic information"
+  },
   "autoload": {
     "psr-4": {
       "CoMech\\TRP\\": "src/"
