@@ -47,6 +47,10 @@ class API implements LoggerAwareInterface
 	/** PSR\Log\LoggerInterface instance */
 	private $logger = null;
 
+	private $pages = 0;
+
+	private $records = 0;
+
 	/** Mappings of class method names to HTTP method verbs and parameter lists for __call() */
 	private $mappings = [
 		'get'		=>	['method'=>'GET',	'filters'=>0,		'post'=>null],
@@ -236,7 +240,21 @@ class API implements LoggerAwareInterface
 		} else {
 			$this->sessiondata = null;
 		}
+		if (isset($json_response->pagination)) {
+			$this->records = $json_response->pagination->total_records;
+			$this->pages = $json_response->pagination->total_pages;
+		}
 		return $json_response->response;
+	}
+
+	function getTotalRecords()
+	{
+		return $this->records;
+	}
+
+	function getTotalPages()
+	{
+		return $this->pages;
 	}
 
 	/** Executes a curl request. 
