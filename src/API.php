@@ -51,6 +51,10 @@ class API implements LoggerAwareInterface
 
 	private $records = 0;
 
+	private $order = [];
+
+	private $clear_ordering = true;
+
 	/** Mappings of class method names to HTTP method verbs and parameter lists for __call() */
 	private $mappings = [
 		'get'		=>	['method'=>'GET',	'filters'=>0,		'post'=>null],
@@ -155,13 +159,30 @@ class API implements LoggerAwareInterface
 	{
 		return $this->user_session;
 	}
+	
+	function asc($field)
+	{
+		$this->order[] = $field;
+		return $this;
+	}
+
+	function desc($field)
+	{
+		$this->order[] = $field . '^';
+		return $this;
+	}
 
 	/** Set the HTTP headers for a curl request.
 	 * @param $ch The existing curl channel to apply to headers to
 	 */
 	private function setHeaders($ch)
 	{
-		$headers = ['User-Agent: TRPAPI-PHP/1.0'];
+		$headers = [
+			'User-Agent: TRPAPI-PHP/1.0',
+		];
+		if (count($this->order)) {
+			$headers[] = 'X-API-Result-Order: ' . join(',', $this->order);
+		}
 		if (!empty($this->user_session)) {
 			$headers[] = "Authorization: Basic " . base64_encode("session:" . $this->user_session);
 		}
@@ -244,6 +265,9 @@ class API implements LoggerAwareInterface
 			$this->records = $json_response->pagination->total_records;
 			$this->pages = $json_response->pagination->total_pages;
 		}
+
+		$this->order = [];
+
 		return $json_response->response;
 	}
 

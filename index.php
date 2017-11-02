@@ -19,8 +19,8 @@ try {
 	/* Note: In later requests you could use the setSessionID() method with this token rather than logging in again. */
 
 	/* Fetch a user as an example */
-	print "Dump first user:\n";
-	$result = $tr->getUsers();
+	print "Dump users:\n";
+	$result = $tr->desc('users.id')->getUsers();
 	print_r($result);
 
 	$result = $tr->getRandomPassword();
