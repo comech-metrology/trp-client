@@ -232,9 +232,10 @@ class API implements LoggerAwareInterface
 		$req_url = '';
 		foreach ($filters as $key => $value) {
 			$op = '=';
-			if (preg_match('/(<>!~=)$/', $key, $opmatch)) {
-				$op = $opmatch[1];
-				$key = preg_replace('/(<>!~=)$/', '', $key);
+			$last = substr($key, -1);
+			if ($last == '<' || $last == '>' || $last == '~' || $last == '=') {
+				$op = $last;
+				$key = substr($key, 0, -1);
 			}
 			$req_url .= '/' . urlencode($key) . $op . urlencode($value);
 		}
@@ -362,7 +363,7 @@ class API implements LoggerAwareInterface
 			$postobject = $this->indexOrNull($mapping['post'], $arguments);
 			$filters = $this->indexOrNull($mapping['filters'], $arguments);
 
-			return $this->MakeRequest($table, $filters, $postobject, $method);
+			return $this->makeRequest($table, $filters, $postobject, $method);
 		} else {
 			throw new Exception\MethodNotFoundException();
 		}

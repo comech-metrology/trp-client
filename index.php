@@ -20,7 +20,7 @@ try {
 
 	/* Fetch a user as an example */
 	print "Dump users:\n";
-	$result = $tr->desc('users.id')->getUsers();
+	$result = $tr->desc('users.id')->getUsers(['first_name~'=>'Test']);
 	print_r($result);
 
 	$result = $tr->getRandomPassword();
