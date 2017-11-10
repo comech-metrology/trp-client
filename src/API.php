@@ -55,6 +55,8 @@ class API implements LoggerAwareInterface
 
 	private $clear_ordering = true;
 
+	private $request = [];
+
 	/** Mappings of class method names to HTTP method verbs and parameter lists for __call() */
 	private $mappings = [
 		'get'		=>	['method'=>'GET',	'filters'=>0,		'post'=>null],
@@ -255,7 +257,11 @@ class API implements LoggerAwareInterface
 		} else if (isset($json_response->error)) {
 			throw new Exception\JSONResponseException($json_response->error);
 		} else if ($json_response && isset($json_response->response->error)) {
-			throw new Exception\JSONResponseException($json_response->response->error);
+			if (preg_match('/^Data Error: /', $json_response->response->error)) {
+				throw new Exception\DataException($json_response->response->error);
+			} else {
+				throw new Exception\JSONResponseException($json_response->response->error);
+			}
 		}
 		if (isset($json_response->request->session)) {
 			$this->sessiondata = $json_response->request->session;
@@ -272,14 +278,52 @@ class API implements LoggerAwareInterface
 		return $json_response->response;
 	}
 
+	/** Returns the total records available from the last result set regardless of paging
+	 */
 	function getTotalRecords()
 	{
 		return $this->records;
 	}
 
+	/** Returns the total number of available pages in the result set
+	 */
 	function getTotalPages()
 	{
 		return $this->pages;
+	}
+
+	/** Returns multiple pages as one result set. This causes a recursive looped call to makeRequest
+	 * which can take quite some time to execute for large numbers of pages.
+	 */
+	function getPageRange($results, $start = 1, $end = 9999)
+	{
+		$pages = $this->getTotalPages();
+
+		if ($start < 1) {
+			$start = 1;
+		}
+		if ($end > $pages) {
+			$end = $pages;
+		}
+
+		$filt = $this->request['filters'];
+		$ep = $this->request['endpoint'];
+		$post = $this->request['post'];
+		$method = $this->request['method'];
+
+		for ($n = $start; $n <= $end; ++$n) {
+			$new_filters = array_merge($filt, ['page'=>$n]);
+			$res = $this->makeRequest($this->request['endpoint'], $new_filters, $this->request['post'], $this->request['method']);
+			if ($res) {
+				foreach ($res as $addition) {
+					$results[] = $addition;
+				}
+			}
+		}
+
+		$this->records = sizeof($results);
+
+		return $results;
 	}
 
 	/** Executes a curl request. 
@@ -308,6 +352,11 @@ class API implements LoggerAwareInterface
 		$this->logIf("API::makeRequest('$endpoint', '".json_encode($filters)."','".json_encode($post)."','$method')");
 		$req_url = $this->base . $endpoint . $this->parseFilters($filters);
 
+		$this->request['endpoint'] = $endpoint;
+		$this->request['filters'] = $filters;
+		$this->request['post'] = $post;
+		$this->request['method'] = $method;
+
 		$ch = $this->getCurl($req_url, $method);
 		$this->setupCurlPost($ch, $post);
 
@@ -333,7 +382,7 @@ class API implements LoggerAwareInterface
 	 * @param $index An index in the $array, or null
 	 * @param $array an array of zero or more values
 	 * @return If $index is null, returns an empty array, otherwise returns the value of the given $index in $array. This is used by
-	 *         the API::mappings array to transpose parameters for makeRequest().
+	 * the API::mappings array to transpose parameters for makeRequest().
 	 */
 	private function indexOrNull($index, $array)
 	{

@@ -6,9 +6,6 @@ try {
 	/* First, instantiate the API client. Use your own certificate here. */
 	$tr = new CoMech\TRP\API("../tests/test.pem");
 
-	/* You can enable debugging with the setDebug() method */
-	/*$tr->setDebug();*/
-
 	/* If using impersonation auth, you must first log in with a username and password */
 	$tr->loginUser("test.user", "testpassword");
 
@@ -20,8 +17,10 @@ try {
 
 	/* Fetch a user as an example */
 	print "Dump users:\n";
-	$result = $tr->desc('users.id')->getUsers(['first_name~'=>'Test']);
+	$result = $tr->getPageRange($tr->desc('assets.asset_no')->getAssets([]), 1, 5);
 	print_r($result);
+
+	print "Done\n";
 
 	$result = $tr->getRandomPassword();
 	print "Random password: $result\n";
