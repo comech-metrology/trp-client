@@ -17,7 +17,8 @@ try {
 
 	/* Fetch a user as an example */
 	print "Dump users:\n";
-	$result = $tr->getPageRange($tr->desc('assets.asset_no')->getAssets([]), 1, 5);
+	//$result = $tr->getPageRange($tr->desc('assets.asset_no')->getAssets([]), 1, 5);
+	$result = $tr->getAssetById(17472);
 	print_r($result);
 
 	print "Done\n";

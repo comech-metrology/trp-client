@@ -129,12 +129,14 @@ class API implements LoggerAwareInterface
 	/** Log in a user using impersonation mode auth
 	 * @param $username The username of the user to log in
 	 * @param $password The password of the user to log in
+	 * @param $ip The IP address the user is logging in from, which will be recorded to the audit log
+	 * @param $useragent The user agent the user is using, which will be recorded to the audit log
 	 * @return True if the user was logged in successfully, false if otherwise.
 	 */
-	function loginUser($username, $password)
+	function loginUser($username, $password, $ip = null, $useragent = null)
 	{
 		try {
-			$response = $this->MakeRequest("login", [], ["username"=>$username, "password"=>$password], 'POST');
+			$response = $this->MakeRequest("login", [], ["username"=>$username, "password"=>$password, 'ip'=>$ip, 'useragent'=>$useragent], 'POST');
 			$this->user_session = $response->user_token;
 		}
 		catch (Exception\JSONResponseException $e) {
@@ -154,6 +156,11 @@ class API implements LoggerAwareInterface
 	function getRandomPassword()
 	{
 		return $this->makeRequest("randompassword")[0]->randompassword;
+	}
+
+	function addAuditlog($message)
+	{
+		$this->createAuditlog(['message'=>$message]);
 	}
 
 	/** Get the current user's session ID after successful LoginUser call */
@@ -311,7 +318,7 @@ class API implements LoggerAwareInterface
 		$post = $this->request['post'];
 		$method = $this->request['method'];
 
-		for ($n = $start; $n <= $end; ++$n) {
+		for ($n = $start + 1; $n <= $end; ++$n) {
 			$new_filters = array_merge($filt, ['page'=>$n]);
 			$res = $this->makeRequest($this->request['endpoint'], $new_filters, $this->request['post'], $this->request['method']);
 			if ($res) {
@@ -397,7 +404,15 @@ class API implements LoggerAwareInterface
 	 */
 	function __call($name, $arguments)
 	{
-		if (preg_match('/^(get|update|create|delete)(\w+)/i', $name, $matches)) {
+		if (preg_match('/^get(\w+)byId$/i', $name, $matches)) {
+			$table = strtolower($matches[1]);
+			if (count($arguments) != 1 || !is_int($arguments[0])) {
+				throw new Exception\MethodNotFoundException();
+			}
+			$filters = [$table . 's.id' => $arguments[0]];
+			$data = $this->makeRequest($table . 's', $filters, null, "GET");
+			return $data ? $data[0] : null;
+		} else if (preg_match('/^(get|update|create|delete)(\w+)$/i', $name, $matches)) {
 
 			$filters = [];
 			$postobject = null;
