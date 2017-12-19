@@ -212,6 +212,7 @@ class API implements LoggerAwareInterface
 			CURLOPT_HEADER		=>	0,
 			CURLOPT_RETURNTRANSFER	=>	1,
 			CURLOPT_CUSTOMREQUEST	=>	$method,
+			CURLOPT_CAINFO		=>	dirname(__FILE__) . '/../cert/letsencrypt.pem',
 		]);
 		$this->setHeaders($ch);
 		return $ch;
@@ -426,6 +427,11 @@ class API implements LoggerAwareInterface
 
 			$postobject = $this->indexOrNull($mapping['post'], $arguments);
 			$filters = $this->indexOrNull($mapping['filters'], $arguments);
+			foreach ($filters as $key=>$val) {
+				if ($val == null) {
+					$filters[$key] = '<NULL>';
+				}
+			}
 
 			return $this->makeRequest($table, $filters, $postobject, $method);
 		} else {

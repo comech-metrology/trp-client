@@ -7,7 +7,7 @@ try {
 	$tr = new CoMech\TRP\API("../tests/test.pem");
 
 	/* If using impersonation auth, you must first log in with a username and password */
-	$tr->loginUser("test.user", "testpassword");
+	$tr->loginUser("test.user", "testpassword", "127.0.0.1", "API-Test-3.0");
 
 	/* If the login succeeds, you'll receive a session ID. store this, or pass it along to the user's session for further requests.
 	 */
