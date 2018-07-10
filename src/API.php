@@ -144,6 +144,17 @@ class API implements LoggerAwareInterface
 		}
 	}
 
+	function impersonateUser($ikey, $ip = null, $useragent = null)
+	{
+		try {
+			$response = $this->MakeRequest("login", [], ['ikey'=>$ikey, 'ip'=>$ip, 'useragent'=>$useragent], 'POST');
+			$this->user_session = $response->user_token;
+		}
+		catch (Exception\JSONResponseException $e) {
+			throw new Exception\LoginException();
+		}
+	}
+
 	/** Log out a user previously logged in via impersonation */
 	function logoutUser()
 	{
