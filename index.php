@@ -16,18 +16,11 @@ try {
 	/* Note: In later requests you could use the setSessionID() method with this token rather than logging in again. */
 
 	/* Fetch a user as an example */
-	print "Dump users:\n";
-	//$result = $tr->getPageRange($tr->desc('assets.asset_no')->getAssets([]), 1, 5);
-	$result = $tr->getAssetById(17472);
+	print "Dump meta:\n";
+	$result = $tr->getMetadata();
 	print_r($result);
 
 	print "Done\n";
-
-	$result = $tr->getRandomPassword();
-	print "Random password: $result\n";
-
-	print "Get session:\n";
-	print_r($tr->getSession());
 
 	/* Log out to clear up the token */
 	print "Logging out\n";
