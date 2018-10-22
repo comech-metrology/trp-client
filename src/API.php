@@ -169,6 +169,11 @@ class API implements LoggerAwareInterface
 		return $this->makeRequest("randompassword")[0]->randompassword;
 	}
 
+	function moveAsset($asset_id, $company_id)
+	{
+		return $this->makeRequest("moveasset", [], ['asset_id'=>$asset_id, 'company_id'=>$company_id], 'POST')[0];
+	}
+
 	function addAuditlog($message)
 	{
 		$this->createAuditlog(['message'=>$message]);

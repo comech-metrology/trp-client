@@ -15,9 +15,8 @@ try {
 
 	/* Note: In later requests you could use the setSessionID() method with this token rather than logging in again. */
 
-	/* Fetch a user as an example */
-	print "Dump meta:\n";
-	$result = $tr->getMetadata();
+	print "Dump test asset:\n";
+	$result = $tr->getAssets(['asset_no'=>'RA/1/2/3']);
 	print_r($result);
 
 	print "Done\n";
