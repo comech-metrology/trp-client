@@ -223,6 +223,7 @@ class API implements LoggerAwareInterface
 	{
 		$ch = curl_init($req_url);
 		curl_setopt_array($ch, [
+			CURLOPT_HTTP_VERSION	=>	CURL_HTTP_VERSION_1_1,
 			CURLOPT_SSLCERT		=>	$this->certificate,
 			CURLOPT_FOLLOWLOCATION	=>	1,
 			CURLOPT_HEADER		=>	0,
