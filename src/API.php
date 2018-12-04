@@ -257,14 +257,16 @@ class API implements LoggerAwareInterface
 	private function parseFilters($filters)
 	{
 		$req_url = '';
-		foreach ($filters as $key => $value) {
-			$op = '=';
-			$last = substr($key, -1);
-			if ($last == '<' || $last == '>' || $last == '~' || $last == '=') {
-				$op = $last;
-				$key = substr($key, 0, -1);
+		if (is_array($filters)) {
+			foreach ($filters as $key => $value) {
+				$op = '=';
+				$last = substr($key, -1);
+				if ($last == '<' || $last == '>' || $last == '~' || $last == '=') {
+					$op = $last;
+					$key = substr($key, 0, -1);
+				}
+				$req_url .= '/' . urlencode($key) . $op . urlencode($value);
 			}
-			$req_url .= '/' . urlencode($key) . $op . urlencode($value);
 		}
 		return $req_url;
 	}
@@ -444,9 +446,11 @@ class API implements LoggerAwareInterface
 
 			$postobject = $this->indexOrNull($mapping['post'], $arguments);
 			$filters = $this->indexOrNull($mapping['filters'], $arguments);
-			foreach ($filters as $key=>$val) {
-				if ($val == null) {
-					$filters[$key] = '<NULL>';
+			if (is_array($filters)) {
+				foreach ($filters as $key=>$val) {
+					if ($val == null) {
+						$filters[$key] = '<NULL>';
+					}
 				}
 			}
 
