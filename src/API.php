@@ -140,7 +140,12 @@ class API implements LoggerAwareInterface
 			$this->user_session = $response->user_token;
 		}
 		catch (Exception\JSONResponseException $e) {
-			throw new Exception\LoginException();
+			$wait = [];
+			if (preg_match("/^Can't retry login this soon after a failed authentication\. Please wait (\d+) seconds/", $e->getMessage(), $wait)) {
+				throw new Exception\RateLimitedException($wait[1]);
+			} else {
+				throw new Exception\LoginException();
+			}
 		}
 	}
 

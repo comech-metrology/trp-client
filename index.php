@@ -7,7 +7,7 @@ try {
 	$tr = new CoMech\TRP\API("../tests/test.pem");
 
 	/* If using impersonation auth, you must first log in with a username and password */
-	$tr->loginUser("test.user", "testpassword", "127.0.0.1", "API-Test-3.0");
+	$tr->loginUser("test.user", $_SERVER['TRP3_TEST_PW'], "127.0.0.1", "API-Test-3.0");
 
 	/* If the login succeeds, you'll receive a session ID. store this, or pass it along to the user's session for further requests.
 	 */
@@ -16,7 +16,7 @@ try {
 	/* Note: In later requests you could use the setSessionID() method with this token rather than logging in again. */
 
 	print "Dump test asset:\n";
-	$result = $tr->getAssets(['asset_no'=>'RA/1/2/3']);
+	$result = $tr->getAssets(["next_check+"=>'2019-01-01','next_check-'=>'2019-02-02']);
 	print_r($result);
 
 	print "Done\n";
