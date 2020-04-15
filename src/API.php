@@ -35,6 +35,9 @@ class API implements LoggerAwareInterface
 	/** Last response from an API call */
 	private $response = null;
 
+	/** Set to true if live environment */
+	private $live = true;
+
 	/** Base address for API endpoints */
 	private $base = 'https://api.trackrecordpro.co.uk/';
 
@@ -68,10 +71,15 @@ class API implements LoggerAwareInterface
 	/** Constructor accepts a private key in PEM format.
 	 * @param $PrivateKey The PEM encoded private key to use for authentication. This should contain both the private and public key parts.
 	 * @param $logger A logger implemeneting Psr\Log\LoggerInterface to receive debug messages
+	 * @param $live Set to true to use the live system, or false to use the development/test system.
 	 */
-	function __construct($PrivateKey, LoggerInterface $logger = null)
+	function __construct($PrivateKey, LoggerInterface $logger = null, $live = true)
 	{
 		$this->setCertificate($PrivateKey);
+		$this->live = $live;
+		if (!$this->live) {
+			$this->base = 'https://api.dev.trackrecordpro.co.uk/';
+		}
 		$this->base = $this->base . $this->version . '/';
 		if ($logger) {
 			$this->setLogger($logger);
@@ -235,6 +243,7 @@ class API implements LoggerAwareInterface
 			CURLOPT_RETURNTRANSFER	=>	1,
 			CURLOPT_CUSTOMREQUEST	=>	$method,
 			CURLOPT_CAINFO		=>	dirname(__FILE__) . '/../cert/letsencrypt.pem',
+			CURLOPT_HTTPHEADER	=>	["Expect:"],
 		]);
 		$this->setHeaders($ch);
 		return $ch;
